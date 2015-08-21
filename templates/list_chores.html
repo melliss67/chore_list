@@ -1,0 +1,14 @@
+<!doctype html>
+<html>
+<head>
+<title>Chores</title>
+</head>
+<body>
+  <h2>Chores</h2>
+  <ul>
+  {% for chore in chores %}
+    <li>{{ chore.name }} - {{ chore.start_date}} - {{ freqTypes[chore.freq] }}</li>
+  {% endfor %}
+  </ul>
+<body>
+</html>

@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+<head>
+<title>Add Chore</title>
+</head>
+<body>
+  <h2>Add Chore</h2>
+  <form action="#" method="post">
+    Name: <input type="text" name="name"><br>
+    Start Date: <input type="date" name="start_date"><br>
+    End Date: <input type="date" name="end_date"><br>
+    Freq: 
+    <select name="freq">
+    {% for type in freqTypes %}
+      <option value="{{ loop.index0 }}">{{ type }}</option>
+    {% endfor %}
+    </select>
+    <br>
+    
+    Values: <input type="text" name="values"><br>
+    <input type="submit" value="Add">
+  </form>
+</body>
+</html>
