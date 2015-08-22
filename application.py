@@ -66,10 +66,19 @@ def add_chore():
             endDate = None
         else:
             endDate = datetime.strptime(request.form['end_date'],'%Y-%m-%d').date()
+        if request.form['freq'] == '0':
+            dayList = request.form.getlist('weekday')
+            dayListInt = []
+            for day in dayList:
+                dayListInt.append(int(day))
+            days = str(dayListInt)
+            newValues = days[1:-1]
+        else:
+            newValues = request.form['values']
         newChore = Chores(name=request.form['name'], 
             start_date=startDate, end_date=endDate,
             freq=request.form['freq'],
-            values=request.form['values'])
+            values=newValues)
         session.add(newChore)
         session.commit()
         return redirect(url_for('list_chores'))
@@ -80,7 +89,13 @@ def add_chore():
 @app.route('/dates')
 def dates():
     returnStr = 'listing dates'
-    dateList = listDates(datetime(2015,8,15),datetime(2018,12,15), 3, 1)
+    # dateList = listDates(datetime(2015,8,15),datetime(2018,12,15), 3, 1)
+    # dateList = listDates(datetime(2015,8,15),datetime(2016,12,15), 0, (1,3))
+    values = '1,3,5'.split(',')
+    valuesInt = []
+    for v in values:
+        valuesInt.append(int(v))
+    dateList = listDates(datetime(2015,8,15),datetime(2016,12,15), 0, valuesInt)
     for d in dateList:
         returnStr += '<br>' + d.strftime ('%A, %B %e, %Y')
     return returnStr
