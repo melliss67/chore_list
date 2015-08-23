@@ -7,7 +7,7 @@
   <h2>Chores</h2>
   <ul>
   {% for chore in chores %}
-    <li>{{ chore.name }} - {{ chore.start_date}} - {{ freqTypes[chore.freq] }}</li>
+    <li>{{ chore.name }} - {{ chore.start_date}} - {{ freqTypes[chore.freq] }} - {{ nextDates[loop.index0] }}</li>
   {% endfor %}
   </ul>
 <body>

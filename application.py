@@ -18,6 +18,25 @@ session = DBSession()
 
 freqTypes = ('By Week Day', 'By Month Day', 'Monthly', 'Yearly')
 
+
+def nextDate(dtstart, freq, values):
+    # freq 0=byweekday, 1=bymonthday, 2=MONTHLY, 3=YEARLY
+    date = []
+    if freq == 0:
+        date = list(rrule(DAILY, count=1, byweekday=values, 
+            dtstart=dtstart, cache=True))
+    elif freq == 1:
+        date = list(rrule(DAILY, count=1, bymonthday=values, 
+            dtstart=dtstart, cache=True))
+    elif freq == 2:
+        date = list(rrule(MONTHLY, count=1, dtstart=dtstart, 
+            interval=values, cache=True))
+    elif freq == 3:
+        date = list(rrule(YEARLY, count=1, dtstart=dtstart, 
+            interval=values, cache=True))
+    return date
+
+
 def listDates(dtstart, dtend, freq, values):
     # freq 0=byweekday, 1=bymonthday, 2=MONTHLY, 3=YEARLY
     dates = []
@@ -48,11 +67,13 @@ def listDates(dtstart, dtend, freq, values):
 
 @app.route('/')
 def list_chores():
-    returnStr = ''
+    nextDates = []
     chores = session.query(Chores).all()
     for c in chores:
-        returnStr += c.name + '<br>'
-    return render_template('list_chores.html', chores=chores, freqTypes=freqTypes)
+        tempDate = nextDate(datetime.now(), c.freq, [1,2,3])
+        nextDates.append(tempDate[0].strftime('%Y-%m-%d'))
+        # datetime.strptime( ,'%Y-%m-%d')
+    return render_template('list_chores.html', chores=chores, freqTypes=freqTypes, nextDates=nextDates)
 
 
 @app.route('/add_chore', methods=['GET', 'POST'])
@@ -89,13 +110,12 @@ def add_chore():
 @app.route('/dates')
 def dates():
     returnStr = 'listing dates'
-    # dateList = listDates(datetime(2015,8,15),datetime(2018,12,15), 3, 1)
-    # dateList = listDates(datetime(2015,8,15),datetime(2016,12,15), 0, (1,3))
     values = '1,3,5'.split(',')
     valuesInt = []
     for v in values:
         valuesInt.append(int(v))
-    dateList = listDates(datetime(2015,8,15),datetime(2016,12,15), 0, valuesInt)
+    # dateList = listDates(datetime(2015,8,16),datetime(2016,12,15), 0, valuesInt)
+    dateList = nextDate(datetime(2015,8,16), 0, valuesInt)
     for d in dateList:
         returnStr += '<br>' + d.strftime ('%A, %B %e, %Y')
     return returnStr
